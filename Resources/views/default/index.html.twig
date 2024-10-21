@@ -358,26 +358,34 @@
                 </h5>
                 <div class="card-body">
                     <ul>
-                        <li>
-                            <button class="btn btn-outline-primary"
-                                title="{{ 'button.call_next'|trans }}"
-                                v-bind:disabled="busy || fila.atendimentos.length===0 || atendimento"
-                                v-on:click="chamar"
-                                v-if="!fila.servico">
-                                <i class="fa fa-bullhorn"></i>
-                                {{ 'button.call'|trans }}
-                            </button>
-                            <button class="btn btn-outline-primary"
-                                title="{{ 'button.call_next'|trans }}"
-                                v-bind:disabled="busy || fila.atendimentos.length===0 || atendimento"
-                                v-on:click="chamarServico(fila.servico.servico)"
-                                v-if="fila.servico">
-                                <i class="fa fa-bullhorn"></i>
-                                {{ 'button.call'|trans }}
-                            </button>
-                            <div v-if="automaticCall.enabled" class="alert alert-info">
+                        <li class="d-flex align-items-center">
+                            <div>
+                                <button class="btn btn-outline-primary"
+                                    title="{{ 'button.call_next'|trans }}"
+                                    v-bind:disabled="busy || fila.atendimentos.length===0 || atendimento || (automaticCall.enabled && !isPaused)"
+                                    v-on:click="chamar"
+                                    v-if="!fila.servico">
+                                    <i class="fa fa-bullhorn"></i>
+                                    {{ 'button.call'|trans }}
+                                </button>
+                                <button class="btn btn-outline-primary"
+                                    title="{{ 'button.call_next'|trans }}"
+                                    v-bind:disabled="busy || fila.atendimentos.length===0 || atendimento || (automaticCall.enabled && !isPaused)"
+                                    v-on:click="chamarServico(fila.servico.servico)"
+                                    v-if="fila.servico">
+                                    <i class="fa fa-bullhorn"></i>
+                                    {{ 'button.call'|trans }}
+                                </button>
+                            </div>
+                            <div v-if="automaticCall.enabled" class="ml-3 alert alert-info py-2 px-3 mb-0">
                                 Chamada automática ativa. Intervalo: {% verbatim %}{{ automaticCall.interval }}{% endverbatim %} segundos.
                             </div>
+                            <button v-if="automaticCall.enabled" 
+                                    class="btn btn-secondary ml-2"
+                                    v-on:click="toggleAutomaticCall">
+                                <i class="fa" v-bind:class="{ 'fa-pause': !isPaused, 'fa-play': isPaused }"></i>
+                                {% verbatim %}{{ isPaused ? 'Retomar' : 'Pausar' }}{% endverbatim %}
+                            </button>
                         </li>
                         <li v-for="(atendimento, index) in fila.atendimentos">
                             <a href="#"
