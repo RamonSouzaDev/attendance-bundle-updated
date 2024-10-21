@@ -347,7 +347,7 @@
                     </div>
                 </div>
             </div>
-            <div v-bind:class="{'fila card mb-3':true, 'border-dark': !fila.servico}" v-for="fila in filas" v-if="!fila.servico || fila.atendimentos.length>0">
+            <div v-bind:class="{'fila card mb-3':true, 'border-dark': !fila.servico}" v-for="(fila, filaIndex) in filas" v-if="!fila.servico || fila.atendimentos.length>0">
                 <h5 class="card-header">
                     <span v-if="!fila.servico">Todos serviços</span>
                     <span v-if="fila.servico">
@@ -377,22 +377,16 @@
                                     {{ 'button.call'|trans }}
                                 </button>
                             </div>
-                            <div v-if="automaticCall.enabled" class="ml-3 alert alert-info py-2 px-3 mb-0">
+                            <div v-if="automaticCall.enabled && filaIndex === 0" class="ml-3 alert alert-info py-2 px-3 mb-0">
                                 Chamada automática ativa. Intervalo: {% verbatim %}{{ automaticCall.interval }}{% endverbatim %} segundos.
                             </div>
-                            <button v-if="automaticCall.enabled" 
-                                    class="btn btn-secondary ml-2"
-                                    v-on:click="toggleAutomaticCall">
-                                <i class="fa" v-bind:class="{ 'fa-pause': !isPaused, 'fa-play': isPaused }"></i>
-                                {% verbatim %}{{ isPaused ? 'Retomar' : 'Pausar' }}{% endverbatim %}
-                            </button>
                         </li>
                         <li v-for="(atendimento, index) in fila.atendimentos">
                             <a href="#"
-                               v-bind:class="{ prioridade: atendimento.prioridade.peso, proximo: index===0 }"
-                               v-bind:style="getItemFilaStyle(atendimento)"
-                               v-on:click.prevent="infoSenha(atendimento)"
-                               v-bind:title="atendimento.servico.nome + ' (' + atendimento.tempoEspera + ')'">
+                            v-bind:class="{ prioridade: atendimento.prioridade.peso, proximo: index===0 }"
+                            v-bind:style="getItemFilaStyle(atendimento)"
+                            v-on:click.prevent="infoSenha(atendimento)"
+                            v-bind:title="atendimento.servico.nome + ' (' + atendimento.tempoEspera + ')'">
                                 {%- verbatim -%}
                                     {{ atendimento.senha.format }}
                                 {%- endverbatim -%}
