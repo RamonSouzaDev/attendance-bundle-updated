@@ -197,7 +197,7 @@ var App = App || {};
                             if (response.success && response.data === null) {
                                 // Fila vazia, desativar chamada automática
                                 self.setAutomaticCallState(false);
-                                App.Notification.warning('Fila vazia. Chamada automática desativada.');
+                                App.Notification.show('Fila vazia. Chamada automática desativada.');
                             } else if (response.data) {
                                 self.atendimento = response.data;
                                 self.atendimentoEmAndamento = true;
