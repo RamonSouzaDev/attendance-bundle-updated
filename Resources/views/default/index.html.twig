@@ -335,16 +335,6 @@
                                 <span>{{ 'button.back'|trans }}</span>
                             </button>
                         </div>
-
-                      <div class="col-md-4 d-grid" v-if="automaticCall.enabled && !atendimentoEmAndamento">
-                            <button type="button"
-                                    class="btn btn-secondary btn-block"
-                                    v-on:click="toggleAutomaticCall"
-                                    :class="{ 'visually-hidden': botaoOculto }">
-                                <i class="fa" v-bind:class="{ 'fa-pause': !isPaused, 'fa-play': isPaused }"></i>
-                                <span>{% verbatim %}{{ isPaused ? 'Retomar' : 'Pausar' }} chamada automática{% endverbatim %}</span>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>

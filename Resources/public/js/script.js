@@ -96,6 +96,17 @@ var App = App || {};
                 }
             },
 
+            toggleAutomaticCallPause(isPaused) {
+                this.isPaused = isPaused;
+                if (this.isPaused) {
+                    this.stopAutomaticCall();
+                    App.Notification.warning('Chamada automática pausada.');
+                } else {
+                    this.startAutomaticCall();
+                    App.Notification.info('Chamada automática retomada.');
+                }
+            },
+
             stopAutomaticCall() {
                 if (this.autoCallTimer) {
                     clearTimeout(this.autoCallTimer);
@@ -107,17 +118,6 @@ var App = App || {};
                 clearTimeout(this.autoCallTimer);
             },
     
-            toggleAutomaticCall() {
-                this.isPaused = !this.isPaused;
-                if (this.isPaused) {
-                    this.stopAutomaticCall();
-                    App.Notification.warning('Chamada automática desativada.');
-                } else {
-                    this.startAutomaticCall();
-                    App.Notification.info('Chamada automática ativada.');
-                }
-            },
-    
             getAutomaticCallSettings() {
                 App.ajax({
                     url: App.url('/novosga.settings/get_automatic_call'),
@@ -125,6 +125,7 @@ var App = App || {};
                     success: (response) => {
                         if (response.success) {
                             this.automaticCall = response.data;
+                            this.isPaused = !this.automaticCall.enabled;
                             this.verificarAtendimentoEIniciarChamada();
                         }
                     },
@@ -144,10 +145,12 @@ var App = App || {};
                             this.atendimento = response.data;
                             this.atendimentoEmAndamento = true;
                             this.stopAutomaticCall();
+                            App.Notification.warning('Chamada automática pausada.');
                         } else {
                             this.atendimentoEmAndamento = false;
                             if (this.automaticCall.enabled && !this.isPaused) {
                                 this.startAutomaticCall();
+                                App.Notification.info('Chamada automática ativada.');
                             }
                         }
                     },
