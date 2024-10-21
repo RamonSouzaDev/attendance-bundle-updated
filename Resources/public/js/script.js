@@ -541,6 +541,11 @@ var App = App || {};
                 this.atendimentoEmAndamento = !!novoAtendimento;
             }
         },
+        computed: {
+            isAutomaticCallActive() {
+                return this.automaticCall.enabled && !this.isPaused;
+            }
+        },
         beforeDestroy() {
             this.stopAutomaticCall();
         },
