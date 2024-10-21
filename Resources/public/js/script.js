@@ -145,7 +145,7 @@ var App = App || {};
                             this.atendimento = response.data;
                             this.atendimentoEmAndamento = true;
                             this.stopAutomaticCall();
-                            App.Notification.show('Chamada automática pausada.');
+                            App.Notification.show('Chamada automática desativada.');
                         } else {
                             this.atendimentoEmAndamento = false;
                             if (this.automaticCall.enabled) {
@@ -194,15 +194,20 @@ var App = App || {};
                         url: App.url('/novosga.attendance/chamar'),
                         type: 'post',
                         success: function (response) {
-                            self.atendimento = response.data;
-                            self.atendimentoEmAndamento = true;
-                            self.stopAutomaticCall();
+                            if (response.success && response.data === null) {
+                                // Fila vazia, desativar chamada automática
+                                self.setAutomaticCallState(false);
+                                App.Notification.warning('Fila vazia. Chamada automática desativada.');
+                            } else if (response.data) {
+                                self.atendimento = response.data;
+                                self.atendimentoEmAndamento = true;
+                                self.stopAutomaticCall();
+                            }
                         },
                         error: function (error) {
                             console.error('Erro ao chamar próximo atendimento:', error);
-                            self.isPaused = true;
-                            self.stopAutomaticCall();
-                            App.Notification.show('Falha na chamada automática. O sistema foi pausado.');
+                            self.setAutomaticCallState(false);
+                            App.Notification.error('Falha na chamada automática. O sistema foi desativado.');
                         },
                         complete: function () {
                             setTimeout(function () {
@@ -211,6 +216,16 @@ var App = App || {};
                             }, 3 * 1000);
                         }
                     });
+                }
+            },
+            
+            setAutomaticCallState(enabled) {
+                this.automaticCall.enabled = enabled;
+                if (enabled) {
+                    this.startAutomaticCall();
+                    App.Notification.info('Chamada automática ativada.');
+                } else {
+                    this.stopAutomaticCall();
                 }
             },
 
