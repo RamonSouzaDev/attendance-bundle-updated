@@ -198,7 +198,7 @@ var App = App || {};
                             console.error('Erro ao chamar próximo atendimento:', error);
                             self.isPaused = true;
                             self.stopAutomaticCall();
-                            App.Notification.error('Falha na chamada automática. O sistema foi pausado.');
+                            App.Notification.info('Falha na chamada automática. O sistema foi pausado.');
                         },
                         complete: function () {
                             setTimeout(function () {
