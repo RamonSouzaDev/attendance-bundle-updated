@@ -46,7 +46,7 @@ var App = App || {};
             autoCallTimer: null,
             isPaused: false,
             atendimentoEmAndamento: false,
-            botaoOculto: false,
+            botaoOculto: true,
         },
         methods: {
             update: function () {
