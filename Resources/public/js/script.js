@@ -194,6 +194,12 @@ var App = App || {};
                             self.atendimentoEmAndamento = true;
                             self.stopAutomaticCall();
                         },
+                        error: function (error) {
+                            console.error('Erro ao chamar próximo atendimento:', error);
+                            self.isPaused = true;
+                            self.stopAutomaticCall();
+                            App.Notification.error('Falha na chamada automática. O sistema foi pausado.');
+                        },
                         complete: function () {
                             setTimeout(function () {
                                 self.busy = false;
@@ -201,6 +207,13 @@ var App = App || {};
                             }, 3 * 1000);
                         }
                     });
+                }
+            },
+
+            stopAutomaticCall() {
+                if (this.autoCallTimer) {
+                    clearTimeout(this.autoCallTimer);
+                    this.autoCallTimer = null;
                 }
             },
             
