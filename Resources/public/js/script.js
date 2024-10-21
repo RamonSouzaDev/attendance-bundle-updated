@@ -45,6 +45,7 @@ var App = App || {};
             },
             autoCallTimer: null,
             isPaused: false,
+            atendimentoEmAndamento: false,
         },
         methods: {
             update: function () {
@@ -161,9 +162,8 @@ var App = App || {};
                         type: 'post',
                         success: function (response) {
                             self.atendimento = response.data;
-                            if (this.automaticCall.enabled && !this.isPaused) {
-                                this.startAutomaticCall();
-                            }
+                            self.atendimentoEmAndamento = true;
+                            self.stopAutomaticCall();
                         },
                         complete: function () {
                             setTimeout(function () {
@@ -200,6 +200,7 @@ var App = App || {};
                     type: 'post',
                     success: function (response) {
                         self.atendimento = response.data;
+                        this.atendimentoEmAndamento = true;
                     }
                 });
             },
@@ -227,6 +228,8 @@ var App = App || {};
                         type: 'post',
                         success: function () {
                             self.atendimento = null;
+                            this.atendimentoEmAndamento = false;
+                            this.reativarChamadaAutomatica();
                         }
                     });
                 });
@@ -324,6 +327,14 @@ var App = App || {};
             encerrar: function(isRedirect) {
                 this.redirecionarAoEncerrar = false;
                 this.fazEncerrar(isRedirect);
+                this.atendimentoEmAndamento = false;
+                this.reativarChamadaAutomatica();
+            },
+
+            reativarChamadaAutomatica: function() {
+                if (this.automaticCall.enabled && !this.isPaused) {
+                    this.startAutomaticCall();
+                }
             },
             
             encerrarRedirecionar: function() {
@@ -445,6 +456,14 @@ var App = App || {};
                     }
                     modal.html(response)
                 });
+            }
+        },
+        watch: {
+            atendimento: function(novoAtendimento) {
+                if (!novoAtendimento) {
+                    this.atendimentoEmAndamento = false;
+                    this.reativarChamadaAutomatica();
+                }
             }
         },
         beforeDestroy() {

@@ -336,7 +336,7 @@
                             </button>
                         </div>
 
-                        <div class="col-md-4 d-grid" v-if="automaticCall.enabled">
+                        <div class="col-md-4 d-grid" v-if="automaticCall.enabled && !atendimentoEmAndamento">
                             <button type="button"
                                     class="btn btn-secondary btn-block"
                                     v-on:click="toggleAutomaticCall">
