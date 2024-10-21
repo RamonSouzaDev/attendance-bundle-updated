@@ -378,9 +378,8 @@ class DefaultController extends AbstractController
         // response
         if (!$success) {
             if (!$proximo) {
-                throw new Exception(
-                    $translator->trans('error.queue.empty', [], self::DOMAIN)
-                );
+                // Fila vazia, retornar resposta vazia
+                return $this->json($envelope);
             } else {
                 throw new Exception(
                     $translator->trans('error.attendance.in_process', [], self::DOMAIN)
@@ -388,6 +387,7 @@ class DefaultController extends AbstractController
             }
         }
 
+        // Se chegou aqui, significa que $success é true e $proximo existe
         $atendimentoService->chamarSenha($unidade, $proximo);
 
         $data = $proximo->jsonSerialize();
