@@ -88,7 +88,7 @@ var App = App || {};
             },
 
             startAutomaticCall() {
-                if (this.automaticCall.enabled && !this.isPaused && !this.atendimentoEmAndamento) {
+                if (this.automaticCall.enabled && !this.atendimentoEmAndamento) {
                     this.stopAutomaticCall();
                     this.autoCallTimer = setTimeout(() => {
                         this.chamar({ target: { disabled: false } });
@@ -100,10 +100,10 @@ var App = App || {};
                 this.isPaused = isPaused;
                 if (this.isPaused) {
                     this.stopAutomaticCall();
-                    App.Notification.warning('Chamada automática pausada.');
+                    App.Notification.show('Chamada automática desativada.');
                 } else {
                     this.startAutomaticCall();
-                    App.Notification.info('Chamada automática retomada.');
+                    App.Notification.show('Chamada automática ativada.');
                 }
             },
 
@@ -145,12 +145,12 @@ var App = App || {};
                             this.atendimento = response.data;
                             this.atendimentoEmAndamento = true;
                             this.stopAutomaticCall();
-                            App.Notification.warning('Chamada automática pausada.');
+                            App.Notification.show('Chamada automática pausada.');
                         } else {
                             this.atendimentoEmAndamento = false;
-                            if (this.automaticCall.enabled && !this.isPaused) {
+                            if (this.automaticCall.enabled) {
                                 this.startAutomaticCall();
-                                App.Notification.info('Chamada automática ativada.');
+                                App.Notification.show('Chamada automática ativada.');
                             }
                         }
                     },
