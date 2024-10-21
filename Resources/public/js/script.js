@@ -142,6 +142,7 @@ var App = App || {};
                         if (response.data) {
                             this.atendimento = response.data;
                             this.atendimentoEmAndamento = true;
+                            this.stopAutomaticCall();
                         } else {
                             this.atendimentoEmAndamento = false;
                             if (this.automaticCall.enabled && !this.isPaused) {
@@ -184,14 +185,14 @@ var App = App || {};
                 
                 if (!e.target.disabled) {
                     e.target.disabled = true;
-
+            
                     App.ajax({
                         url: App.url('/novosga.attendance/chamar'),
                         type: 'post',
                         success: function (response) {
                             self.atendimento = response.data;
-                            this.atendimentoEmAndamento = true;
-                            this.stopAutomaticCall();
+                            self.atendimentoEmAndamento = true;
+                            self.stopAutomaticCall();
                         },
                         complete: function () {
                             setTimeout(function () {
@@ -246,7 +247,8 @@ var App = App || {};
                     type: 'post',
                     success: function (response) {
                         self.atendimento = response.data;
-                        this.atendimentoEmAndamento = true;
+                        self.atendimentoEmAndamento = true;
+                        self.stopAutomaticCall();
                     }
                 });
             },
@@ -363,7 +365,7 @@ var App = App || {};
                             self.atendimentoEmAndamento = false;
                             self.redirecionarAoEncerrar = false;
                             $('.modal').modal('hide');
-                            self.reativarChamadaAutomatica();
+                            self.verificarAtendimentoEIniciarChamada();
                         }
                     });
                 });
@@ -468,6 +470,12 @@ var App = App || {};
                 return styles.join(';')
             },
 
+            startPeriodicUpdate() {
+                setInterval(() => {
+                    this.update();
+                }, 30000);
+            },
+
             async loadCustomer() {
                 const modal = $('#dialog-customer .modal-body')
                 modal.html('')
@@ -510,34 +518,38 @@ var App = App || {};
             this.stopAutomaticCall();
         },
         mounted() {
+            // Verificar permissões de notificação
             if (!App.Notification.allowed()) {
                 $('#notification').show();
             }
-
+        
+            // Verificar atendimento atual e configurações de chamada automática
             this.verificarAtendimentoEmAndamento();
-
-            if (self.usuario.numeroLocal) {
-                self.update();
-            }
-
             this.getAutomaticCallSettings();
-
+        
+            // Configurar SSE (Server-Sent Events)
             App.SSE.connect([
                 `/unidades/${this.unidade.id}/fila`,
                 `/usuarios/${this.usuario.id}/fila`,
             ]);
-
+        
             App.SSE.onmessage = (e, data) => {
                 this.update();
             };
-
-            // ajax polling fallback
+        
+            // Fallback para polling AJAX
             App.SSE.ondisconnect = () => {
                 this.update();
             };
-            
-            this.update();
-        }
+        
+            // Atualizar informações iniciais
+            if (this.usuario.numeroLocal) {
+                this.update();
+            }
+        
+            // Iniciar verificação periódica
+            this.startPeriodicUpdate();
+        },
     });
     
     if (!local) {
