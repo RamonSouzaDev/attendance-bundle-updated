@@ -39,6 +39,12 @@ var App = App || {};
             searchResult: [],
             usuarios: [],
             novoUsuario: null,
+            automaticCall: {
+                enabled: false,
+                interval: 0
+            },
+            autoCallTimer: null,
+            isPaused: false,
         },
         methods: {
             update: function () {
@@ -78,6 +84,47 @@ var App = App || {};
                     }
                 });
             },
+
+            startAutomaticCall() {
+                if (this.automaticCall.enabled && !this.isPaused) {
+                    this.autoCallTimer = setTimeout(() => {
+                        this.chamar({ target: { disabled: false } });
+                    }, this.automaticCall.interval * 1000);
+                }
+            },
+    
+            stopAutomaticCall() {
+                clearTimeout(this.autoCallTimer);
+            },
+    
+            toggleAutomaticCall() {
+                this.isPaused = !this.isPaused;
+                if (this.isPaused) {
+                    this.stopAutomaticCall();
+                    App.Notification.info('Chamada automática pausada');
+                } else {
+                    this.startAutomaticCall();
+                    App.Notification.info('Chamada automática retomada');
+                }
+            },
+    
+            getAutomaticCallSettings() {
+                App.ajax({
+                    url: App.url('/novosga.settings/get_automatic_call'),
+                    type: 'get',
+                    success: (response) => {
+                        if (response.success) {
+                            this.automaticCall = response.data;
+                            if (this.automaticCall.enabled) {
+                                this.startAutomaticCall();
+                            }
+                        }
+                    },
+                    error: (error) => {
+                        console.error('Erro ao obter configurações de chamada automática:', error);
+                    }
+                });
+            },
             
             setLocal: function () {
                 var self = this;
@@ -114,6 +161,9 @@ var App = App || {};
                         type: 'post',
                         success: function (response) {
                             self.atendimento = response.data;
+                            if (this.automaticCall.enabled && !this.isPaused) {
+                                this.startAutomaticCall();
+                            }
                         },
                         complete: function () {
                             setTimeout(function () {
@@ -397,6 +447,9 @@ var App = App || {};
                 });
             }
         },
+        beforeDestroy() {
+            this.stopAutomaticCall();
+        },
         mounted() {
             if (!App.Notification.allowed()) {
                 $('#notification').show();
@@ -405,6 +458,8 @@ var App = App || {};
             if (self.usuario.numeroLocal) {
                 self.update();
             }
+
+            this.getAutomaticCallSettings();
 
             App.SSE.connect([
                 `/unidades/${this.unidade.id}/fila`,

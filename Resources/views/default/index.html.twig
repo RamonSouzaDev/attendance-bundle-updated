@@ -335,6 +335,15 @@
                                 <span>{{ 'button.back'|trans }}</span>
                             </button>
                         </div>
+
+                        <div class="col-md-4 d-grid" v-if="automaticCall.enabled">
+                            <button type="button"
+                                    class="btn btn-secondary btn-block"
+                                    v-on:click="toggleAutomaticCall">
+                                <i class="fa" v-bind:class="{ 'fa-pause': !isPaused, 'fa-play': isPaused }"></i>
+                                <span>{% verbatim %}{{ isPaused ? 'Retomar' : 'Pausar' }} chamada automática{% endverbatim %}</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -366,6 +375,9 @@
                                 <i class="fa fa-bullhorn"></i>
                                 {{ 'button.call'|trans }}
                             </button>
+                            <div v-if="automaticCall.enabled" class="alert alert-info">
+                                Chamada automática ativa. Intervalo: {% verbatim %}{{ automaticCall.interval }}{% endverbatim %} segundos.
+                            </div>
                         </li>
                         <li v-for="(atendimento, index) in fila.atendimentos">
                             <a href="#"
