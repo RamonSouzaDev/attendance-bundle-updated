@@ -377,8 +377,15 @@
                                     {{ 'button.call'|trans }}
                                 </button>
                             </div>
-                            <div v-if="automaticCall.enabled && filaIndex === 0" class="ml-3 alert alert-info py-2 px-3 mb-0">
-                                Chamada automática ativa. Intervalo: {% verbatim %}{{ automaticCall.interval }}{% endverbatim %} segundos.
+                            <div v-if="automaticCall.enabled && filaIndex === 0" 
+                                class="ml-3 alert py-2 px-3 mb-0"
+                                :class="{ 'alert-info': !isPaused, 'alert-warning': isPaused }">
+                                <span v-if="!isPaused">
+                                    Chamada automática ativa. Intervalo: {% verbatim %}{{ automaticCall.interval }}{% endverbatim %} segundos.
+                                </span>
+                                <span v-else>
+                                    Chamada automática desativada.
+                                </span>
                             </div>
                         </li>
                         <li v-for="(atendimento, index) in fila.atendimentos">

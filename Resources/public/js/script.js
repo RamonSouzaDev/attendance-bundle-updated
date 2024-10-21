@@ -110,10 +110,10 @@ var App = App || {};
                 this.isPaused = !this.isPaused;
                 if (this.isPaused) {
                     this.stopAutomaticCall();
-                    App.Notification.show('Chamada automática pausada');
+                    App.Notification.warning('Chamada automática desativada.');
                 } else {
                     this.startAutomaticCall();
-                    App.Notification.show('Chamada automática retomada');
+                    App.Notification.info('Chamada automática ativada.');
                 }
             },
     
