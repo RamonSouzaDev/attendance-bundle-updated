@@ -241,7 +241,7 @@
                             <button type="button"
                                     class="btn btn-primary btn-block"
                                     title="{{ 'button.call_next'|trans }}"
-                                    v-bind:disabled="busy || total === 0 || isAutomaticCallActive"
+                                    v-bind:disabled="busy || total === 0 || automaticCall.enabled"
                                     v-on:click="chamar">
                                 <i class="fa fa-bullhorn"></i>
                                 <span>{{ 'button.call_next'|trans }}</span>
@@ -353,7 +353,7 @@
                             <div>
                                 <button class="btn btn-outline-primary"
                                     title="{{ 'button.call_next'|trans }}"
-                                    v-bind:disabled="busy || fila.atendimentos.length===0 || atendimento || (automaticCall.enabled && !isPaused)"
+                                    v-bind:disabled="busy || fila.atendimentos.length===0 || atendimento || (automaticCall.enabled)"
                                     v-on:click="chamar"
                                     v-if="!fila.servico">
                                     <i class="fa fa-bullhorn"></i>
@@ -361,7 +361,7 @@
                                 </button>
                                 <button class="btn btn-outline-primary"
                                     title="{{ 'button.call_next'|trans }}"
-                                    v-bind:disabled="busy || fila.atendimentos.length===0 || atendimento || (automaticCall.enabled && !isPaused)"
+                                    v-bind:disabled="busy || fila.atendimentos.length===0 || atendimento || (automaticCall.enabled)"
                                     v-on:click="chamarServico(fila.servico.servico)"
                                     v-if="fila.servico">
                                     <i class="fa fa-bullhorn"></i>
