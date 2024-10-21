@@ -162,8 +162,8 @@ var App = App || {};
                         type: 'post',
                         success: function (response) {
                             self.atendimento = response.data;
-                            self.atendimentoEmAndamento = true;
-                            self.stopAutomaticCall();
+                            this.atendimentoEmAndamento = true;
+                            this.stopAutomaticCall();
                         },
                         complete: function () {
                             setTimeout(function () {
@@ -189,6 +189,24 @@ var App = App || {};
                         setTimeout(function () {
                             self.busy = false;
                         }, 3 * 1000);
+                    }
+                });
+            },
+
+            verificarAtendimentoEmAndamento() {
+                App.ajax({
+                    url: App.url('/novosga.attendance/atendimento'),
+                    type: 'get',
+                    success: (response) => {
+                        if (response.data) {
+                            this.atendimento = response.data;
+                            this.atendimentoEmAndamento = true;
+                        } else {
+                            this.atendimentoEmAndamento = false;
+                        }
+                    },
+                    error: (error) => {
+                        console.error('Erro ao verificar atendimento atual:', error);
                     }
                 });
             },
@@ -278,7 +296,6 @@ var App = App || {};
                     observacao: this.atendimento.observacao
                 };
                 
-                // se foi submetido via modal de redirecionamento
                 if (isRedirect) {
                     if (!this.servicoRedirecionar) {
                         $('#dialog-erro-encerrar').modal('show');
@@ -287,13 +304,11 @@ var App = App || {};
                     data.redirecionar = true;
                     data.novoServico = this.servicoRedirecionar;
                     data.novoUsuario = this.novoUsuario;
-                } else {
-                    if (this.redirecionarAoEncerrar) {
-                        this.novoUsuario = null;
-                        this.servicoRedirecionar = null;
-                        $('#dialog-redirecionar').modal('show');
-                        return;
-                    }
+                } else if (this.redirecionarAoEncerrar) {
+                    this.novoUsuario = null;
+                    this.servicoRedirecionar = null;
+                    $('#dialog-redirecionar').modal('show');
+                    return;
                 }
                 
                 swal({
@@ -317,8 +332,10 @@ var App = App || {};
                         data: data,
                         success: function () {
                             self.atendimento = null;
+                            self.atendimentoEmAndamento = false;
                             self.redirecionarAoEncerrar = false;
                             $('.modal').modal('hide');
+                            self.reativarChamadaAutomatica();
                         }
                     });
                 });
@@ -327,8 +344,6 @@ var App = App || {};
             encerrar: function(isRedirect) {
                 this.redirecionarAoEncerrar = false;
                 this.fazEncerrar(isRedirect);
-                this.atendimentoEmAndamento = false;
-                this.reativarChamadaAutomatica();
             },
 
             reativarChamadaAutomatica: function() {
@@ -459,11 +474,8 @@ var App = App || {};
             }
         },
         watch: {
-            atendimento: function(novoAtendimento) {
-                if (!novoAtendimento) {
-                    this.atendimentoEmAndamento = false;
-                    this.reativarChamadaAutomatica();
-                }
+            atendimento(novoAtendimento) {
+                this.atendimentoEmAndamento = !!novoAtendimento;
             }
         },
         beforeDestroy() {
@@ -473,6 +485,8 @@ var App = App || {};
             if (!App.Notification.allowed()) {
                 $('#notification').show();
             }
+
+            this.verificarAtendimentoEmAndamento();
 
             if (self.usuario.numeroLocal) {
                 self.update();
