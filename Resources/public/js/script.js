@@ -87,10 +87,18 @@ var App = App || {};
             },
 
             startAutomaticCall() {
-                if (this.automaticCall.enabled && !this.isPaused) {
+                if (this.automaticCall.enabled && !this.isPaused && !this.atendimentoEmAndamento) {
+                    this.stopAutomaticCall();
                     this.autoCallTimer = setTimeout(() => {
                         this.chamar({ target: { disabled: false } });
                     }, this.automaticCall.interval * 1000);
+                }
+            },
+
+            stopAutomaticCall() {
+                if (this.autoCallTimer) {
+                    clearTimeout(this.autoCallTimer);
+                    this.autoCallTimer = null;
                 }
             },
     
@@ -116,13 +124,33 @@ var App = App || {};
                     success: (response) => {
                         if (response.success) {
                             this.automaticCall = response.data;
-                            if (this.automaticCall.enabled) {
+                            this.verificarAtendimentoEIniciarChamada();
+                        }
+                    },
+                    error: (error) => {
+                        console.error('Erro ao obter configurações de chamada automática:', error);
+                    }
+                });
+            },
+
+            
+            verificarAtendimentoEIniciarChamada() {
+                App.ajax({
+                    url: App.url('/novosga.attendance/atendimento'),
+                    type: 'get',
+                    success: (response) => {
+                        if (response.data) {
+                            this.atendimento = response.data;
+                            this.atendimentoEmAndamento = true;
+                        } else {
+                            this.atendimentoEmAndamento = false;
+                            if (this.automaticCall.enabled && !this.isPaused) {
                                 this.startAutomaticCall();
                             }
                         }
                     },
                     error: (error) => {
-                        console.error('Erro ao obter configurações de chamada automática:', error);
+                        console.error('Erro ao verificar atendimento atual:', error);
                     }
                 });
             },
