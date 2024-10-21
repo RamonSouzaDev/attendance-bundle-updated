@@ -428,7 +428,7 @@ var App = App || {};
                         if (!ok) {
                             return;
                         }
-
+            
                         App.ajax({
                             url: App.url('/novosga.attendance/redirecionar'),
                             type: 'post',
@@ -438,7 +438,15 @@ var App = App || {};
                             },
                             success: function () {
                                 self.atendimento = null;
+                                self.atendimentoEmAndamento = false;
                                 $('.modal').modal('hide');
+                                self.verificarAtendimentoEIniciarChamada();
+                            },
+                            error: function (error) {
+                                console.error('Erro ao redirecionar atendimento:', error);
+                            },
+                            complete: function () {
+                                self.busy = false;
                             }
                         });
                     });
