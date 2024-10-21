@@ -110,10 +110,10 @@ var App = App || {};
                 this.isPaused = !this.isPaused;
                 if (this.isPaused) {
                     this.stopAutomaticCall();
-                    App.Notification.info('Chamada automática pausada');
+                    App.Notification.show('Chamada automática pausada');
                 } else {
                     this.startAutomaticCall();
-                    App.Notification.info('Chamada automática retomada');
+                    App.Notification.show('Chamada automática retomada');
                 }
             },
     
@@ -198,7 +198,7 @@ var App = App || {};
                             console.error('Erro ao chamar próximo atendimento:', error);
                             self.isPaused = true;
                             self.stopAutomaticCall();
-                            App.Notification.info('Falha na chamada automática. O sistema foi pausado.');
+                            App.Notification.show('Falha na chamada automática. O sistema foi pausado.');
                         },
                         complete: function () {
                             setTimeout(function () {
