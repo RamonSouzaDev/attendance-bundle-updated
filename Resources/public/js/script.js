@@ -276,8 +276,14 @@ var App = App || {};
                         type: 'post',
                         success: function () {
                             self.atendimento = null;
-                            this.atendimentoEmAndamento = false;
-                            this.reativarChamadaAutomatica();
+                            self.atendimentoEmAndamento = false;
+                            self.verificarAtendimentoEIniciarChamada();
+                        },
+                        error: function (error) {
+                            console.error('Erro ao registrar não comparecimento:', error);
+                        },
+                        complete: function () {
+                            self.busy = false;
                         }
                     });
                 });
