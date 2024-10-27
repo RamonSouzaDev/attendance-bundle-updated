@@ -2,7 +2,7 @@
  * Novo SGA - Atendimento
  * @author Rogerio Lino <rogeriolino@gmail.com>
  */
-.attendance-panel {
+ .attendance-panel {
     padding-top: 1rem;
     padding-bottom: 1rem;
 }
@@ -15,60 +15,59 @@
     position: relative;
 }
 
-.visually-hidden {
-    position: absolute !important;
-    width: 1px !important;
-    height: 1px !important;
-    padding: 0 !important;
-    margin: -1px !important;
-    overflow: hidden !important;
-    clip: rect(0, 0, 0, 0) !important;
-    white-space: nowrap !important;
-    border: 0 !important;
-  }
-
 /* local */
-
 #atendimento #local {
-    color: #000;
+    color: #fff;
     min-width: 130px;
-    background-color: #F8CA00;
-    border-bottom: 3px solid #333;
+    background-color: #0d47a1; /* Alterado para azul */
+    border-radius: 4px; /* Adicionado border-radius */
     display: block;
+    text-decoration: none;
+    padding: 15px;
 }
 
 #atendimento #local .local {
-    font-size: 20px;
+    font-size: 18px;
     line-height: 20px;
     text-align: center;
     display: block;
     padding: .5rem 0;
+    color: #fff;
+    order: 1;
 }
 
 #atendimento #local .numero {
-    font-size: 80px;
-    line-height: 80px;
+    font-size: 64px;
+    line-height: 1;
     padding: .8rem 0;
     font-weight: bold;
     text-align: center;
     display: block;
+    color: #fff;
+    order: 2;
 }
 
 #atendimento #local .tipo-atendimento {
     font-size: 14px;
     line-height: 14px;
-    padding: .4rem 0;
+    padding: 5px 20px;
     text-align: center;
-    font-weight: bold;
-    display: block;
+    font-weight: 500;
+    display: inline-block;
+    background: white;
+    color: #0d47a1;
+    border-radius: 20px;
+    margin-top: 10px;
+    order: 3;
 }
 
-#atendimento #local .tipo-atendimento.tipo-normal { color: blue; }
-#atendimento #local .tipo-atendimento.tipo-prioridade { color: red; }
-#atendimento #local .tipo-atendimento.tipo-agendamento { color: darkorange; }
+/* Removidos os tipos específicos pois agora usa fundo branco */
+#atendimento #local .tipo-atendimento.tipo-normal { color: #0d47a1; }
+#atendimento #local .tipo-atendimento.tipo-prioridade { color: #0d47a1; }
+#atendimento #local .tipo-atendimento.tipo-agendamento { color: #0d47a1; }
 
 #atendimento #local a {
-    color: #666;
+    color: #fff;
     bottom: 10px;
     width: 100%;
     font-size: 12px;
@@ -76,7 +75,7 @@
     display: block;
 }
 
-#atendimento #local a:hover { color: #000; }
+#atendimento #local a:hover { color: #fff; }
 
 #atendimento .controls .btn .fa {
     padding: 3pt 0;
@@ -85,33 +84,52 @@
 }
 
 /* fila */
-
 #atendimento .fila {
     clear: both;
+    margin-top: 15px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 #atendimento .fila .card-header {
     font-size: 14px;
+    background-color: #f8f9fa;
+    padding: 15px;
+    font-weight: 500;
 }
 
 #atendimento .fila .card-body {
-    padding-top: 0 !important;
+    padding: 15px !important;
 }
 
 #atendimento .fila ul {
     padding: 0;
     margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 #atendimento .fila ul li {
     list-style: none;
-    display: inline;
-    padding: 12px 6px 0 6px;
+    padding: 0;
     display: inline-block;
+}
+
+#atendimento .fila ul li a {
+    display: inline-block;
+    padding: 6px 12px;
+    background: #e9ecef;
+    border-radius: 4px;
+    color: #0d47a1;
+    text-decoration: none;
+    transition: all 0.2s;
 }
 
 #atendimento .fila ul li .proximo {
     font-size: 20px;
+    background-color: #0d47a1;
+    color: white;
 }
 
 #atendimento .fila ul li .prioridade {
@@ -124,6 +142,7 @@
     padding-top: 15px;
 }
 
+/* Links e botões */
 p.links {
     padding-top: 20px;
     text-align: center;
@@ -140,4 +159,17 @@ p.links a {
 
 #dialog-busca .result {
     overflow: auto;
+}
+
+/* Relógio */
+.clock {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #0d47a1;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-weight: bold;
+    z-index: 1000;
 }

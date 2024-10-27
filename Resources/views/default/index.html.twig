@@ -241,7 +241,7 @@
                             <button type="button"
                                     class="btn btn-primary btn-block"
                                     title="{{ 'button.call_next'|trans }}"
-                                    v-bind:disabled="busy || total === 0 || automaticCall.enabled"
+                                    v-bind:disabled="busy || total===0"
                                     v-on:click="chamar">
                                 <i class="fa fa-bullhorn"></i>
                                 <span>{{ 'button.call_next'|trans }}</span>
@@ -338,7 +338,7 @@
                     </div>
                 </div>
             </div>
-            <div v-bind:class="{'fila card mb-3':true, 'border-dark': !fila.servico}" v-for="(fila, filaIndex) in filas" v-if="!fila.servico || fila.atendimentos.length>0">
+            <div v-bind:class="{'fila card mb-3':true, 'border-dark': !fila.servico}" v-for="fila in filas" v-if="!fila.servico || fila.atendimentos.length>0">
                 <h5 class="card-header">
                     <span v-if="!fila.servico">Todos serviços</span>
                     <span v-if="fila.servico">
@@ -349,42 +349,30 @@
                 </h5>
                 <div class="card-body">
                     <ul>
-                        <li class="d-flex align-items-center">
-                            <div>
-                                <button class="btn btn-outline-primary"
-                                    title="{{ 'button.call_next'|trans }}"
-                                    v-bind:disabled="busy || fila.atendimentos.length===0 || atendimento || (automaticCall.enabled)"
-                                    v-on:click="chamar"
-                                    v-if="!fila.servico">
-                                    <i class="fa fa-bullhorn"></i>
-                                    {{ 'button.call'|trans }}
-                                </button>
-                                <button class="btn btn-outline-primary"
-                                    title="{{ 'button.call_next'|trans }}"
-                                    v-bind:disabled="busy || fila.atendimentos.length===0 || atendimento || (automaticCall.enabled)"
-                                    v-on:click="chamarServico(fila.servico.servico)"
-                                    v-if="fila.servico">
-                                    <i class="fa fa-bullhorn"></i>
-                                    {{ 'button.call'|trans }}
-                                </button>
-                            </div>
-                            <div v-if="filaIndex === 0" 
-                                class="ml-3 alert py-2 px-3 mb-0"
-                                :class="{ 'alert-info': automaticCall.enabled, 'alert-warning': !automaticCall.enabled }">
-                                <span v-if="automaticCall.enabled">
-                                    Chamada automática ativa. Intervalo: {% verbatim %}{{ automaticCall.interval }}{% endverbatim %} segundos.
-                                </span>
-                                <span v-else>
-                                    Chamada automática desativada.
-                                </span>
-                            </div>
+                        <li>
+                            <button class="btn btn-outline-primary"
+                                title="{{ 'button.call_next'|trans }}"
+                                v-bind:disabled="busy || fila.atendimentos.length===0 || atendimento"
+                                v-on:click="chamar"
+                                v-if="!fila.servico">
+                                <i class="fa fa-bullhorn"></i>
+                                {{ 'button.call'|trans }}
+                            </button>
+                            <button class="btn btn-outline-primary"
+                                title="{{ 'button.call_next'|trans }}"
+                                v-bind:disabled="busy || fila.atendimentos.length===0 || atendimento"
+                                v-on:click="chamarServico(fila.servico.servico)"
+                                v-if="fila.servico">
+                                <i class="fa fa-bullhorn"></i>
+                                {{ 'button.call'|trans }}
+                            </button>
                         </li>
                         <li v-for="(atendimento, index) in fila.atendimentos">
                             <a href="#"
-                            v-bind:class="{ prioridade: atendimento.prioridade.peso, proximo: index===0 }"
-                            v-bind:style="getItemFilaStyle(atendimento)"
-                            v-on:click.prevent="infoSenha(atendimento)"
-                            v-bind:title="atendimento.servico.nome + ' (' + atendimento.tempoEspera + ')'">
+                               v-bind:class="{ prioridade: atendimento.prioridade.peso, proximo: index===0 }"
+                               v-bind:style="getItemFilaStyle(atendimento)"
+                               v-on:click.prevent="infoSenha(atendimento)"
+                               v-bind:title="atendimento.servico.nome + ' (' + atendimento.tempoEspera + ')'">
                                 {%- verbatim -%}
                                     {{ atendimento.senha.format }}
                                 {%- endverbatim -%}
@@ -701,6 +689,191 @@
 {% block stylesheets %}
     {{ parent() }}
     <link type="text/css" rel="stylesheet" href="{{ asset('bundles/novosgaattendance/css/style.css') }}">
+    <style>
+    /* Estilos do guichê - mantendo a estrutura original mas alterando as cores */
+#atendimento #local {
+    color: #fff !important; /* Texto branco */
+    min-width: 130px;
+    background-color: #0d47a1 !important; /* Azul */
+    border-bottom: none !important; /* Remove a borda inferior preta */
+    display: block;
+    text-align: center;
+    border-radius: 4px;
+    padding: 20px;
+    text-decoration: none;
+}
+
+#atendimento #local .local {
+    color: #fff;
+    font-size: 24px;
+    line-height: 1.2;
+    text-align: center;
+    display: block;
+    padding: .5rem 0;
+}
+
+#atendimento #local .numero {
+    color: #fff;
+    font-size: 64px;
+    line-height: 1;
+    padding: .8rem 0;
+    font-weight: bold;
+    text-align: center;
+    display: block;
+}
+
+#atendimento #local .tipo-atendimento {
+    font-size: 14px;
+    padding: 5px 20px;
+    text-align: center;
+    font-weight: 500;
+    display: inline-block;
+    margin-top: 10px;
+    background: white;
+    color: #0d47a1;
+    border-radius: 20px;
+}
+
+/* Remove as cores específicas dos tipos já que agora usa fundo branco */
+#atendimento #local .tipo-atendimento.tipo-normal,
+#atendimento #local .tipo-atendimento.tipo-prioridade,
+#atendimento #local .tipo-atendimento.tipo-agendamento {
+    color: #0d47a1;
+    background: white;
+}
+
+/* Ajuste no link dentro do local para manter texto branco */
+#atendimento #local a {
+    color: #fff;
+}
+
+#atendimento #local a:hover {
+    color: #fff;
+    text-decoration: none;
+}
+        /* Estilos do Guichê */
+        #local {
+            background-color: #0d47a1;
+            color: white;
+            text-decoration: none;
+            padding: 20px;
+            border-radius: 4px;
+            display: block;
+            text-align: center;
+        }
+
+        #local .numero {
+            font-size: 48px;
+            font-weight: bold;
+            display: block;
+            margin: 10px 0;
+        }
+
+        #local .tipo-atendimento {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        /* Estilos dos Cards */
+        .card {
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            font-weight: 500;
+            padding: 15px;
+        }
+
+        /* Botões */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn i {
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background-color: #0d47a1;
+            border-color: #0d47a1;
+        }
+
+        .btn-primary:hover {
+            background-color: #0a3d8f;
+            border-color: #0a3d8f;
+        }
+
+        /* Lista de Senhas */
+        .fila ul {
+            list-style: none;
+            padding: 15px;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .fila a {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #e9ecef;
+            border-radius: 4px;
+            color: #0d47a1;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .fila a.prioridade {
+            font-weight: bold;
+        }
+
+        .fila a.proximo {
+            background-color: #0d47a1;
+            color: white;
+        }
+
+        /* Relógio */
+        .clock {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #0d47a1;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+            z-index: 1000;
+        }
+
+        /* Informações do usuário */
+        .text-center.p-3 {
+            background: white;
+            border-radius: 4px;
+            margin-top: 10px;
+            padding: 15px;
+        }
+
+        /* Tabelas */
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 500;
+            width: 40%;
+        }
+
+        /* Formulários */
+        .form-control:focus {
+            border-color: #0d47a1;
+            box-shadow: 0 0 0 0.2rem rgba(13, 71, 161, 0.25);
+        }
+    </style>
 {% endblock %}
 
 {% block javascripts %}
