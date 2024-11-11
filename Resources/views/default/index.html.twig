@@ -391,9 +391,14 @@
                 <i class="fa fa-search"></i>&nbsp;
                 {{ 'button.find_ticket'|trans }}
             </a>
-            <button id="notification" type="button" class="btn btn-warning" onclick="App.Notification.request(this)" style="display: none">
+            <button id="enable-notification" type="button" class="btn btn-warning" onclick="App.Notification.request(this)" style="display: none">
                 <i class="fa fa-exclamation"></i>&nbsp;
                 {{ 'button.enable_notification'|trans }}
+            </button>
+
+            <button id="disable-notification" type="button" class="btn btn-danger" onclick="App.Notification.disable(this)" style="display: none">
+                <i class="fa fa-bell-slash"></i>&nbsp;
+                {{ 'button.disable_notification'|trans }}
             </button>
         </p>
 

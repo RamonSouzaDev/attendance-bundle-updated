@@ -322,6 +322,10 @@
         <source>alert.no_show.text</source>
         <target>Deseja realmente marcar como não compareceu?</target>
       </trans-unit>
+      <trans-unit id="74">
+        <source>button.disable_notification</source>
+        <target>Desabilitar Notificações</target>
+      </trans-unit>
       <trans-unit id="modal.customer">
         <source>modal.customer</source>
         <target>Editar cliente</target>

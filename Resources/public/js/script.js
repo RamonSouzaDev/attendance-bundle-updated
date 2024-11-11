@@ -553,6 +553,12 @@ var App = App || {};
                     }
                     modal.html(response)
                 });
+            },
+
+            updateNotificationButtons() {
+                const isAllowed = App.Notification.allowed();
+                $('#enable-notification').toggle(!isAllowed);
+                $('#disable-notification').toggle(isAllowed);
             }
         },
         watch: {
@@ -569,10 +575,7 @@ var App = App || {};
             this.stopAutomaticCall();
         },
         mounted() {
-            // Verificar permissões de notificação
-            if (!App.Notification.allowed()) {
-                $('#notification').show();
-            }
+            this.updateNotificationButtons();
         
             // Verificar atendimento atual e configurações de chamada automática
             this.verificarAtendimentoEmAndamento();
